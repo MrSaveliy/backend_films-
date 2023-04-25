@@ -1,0 +1,73 @@
+version: '3'
+
+services:
+  profile:
+    container_name: profile-service
+    build:
+      context: .
+      dockerfile: ./apps/profile-service/Dockerfile
+    env_file:
+      - apps/profile-service/.env
+    ports:
+      - 5000:5000
+    command: npm run start:dev profile-service
+    depends_on:
+      - auth
+      - profile-db
+      - rabbitmq
+    restart: always
+    volumes:
+      - .:/app
+      - /app/node_modules
+  auth:
+    container_name: auth-service
+    build:
+      context: .
+      dockerfile: ./apps/auth-service/Dockerfile
+    env_file:
+      - apps/auth-service/.env
+    ports:
+      - 5001:5000
+    command: npm run start:dev auth-service
+    depends_on:
+      - auth-db
+      - rabbitmq
+    restart: always
+    volumes:
+      - .:/app
+      - /app/node_modules
+  auth-db:
+    container_name: auth-db
+    image: postgres:12
+    env_file:
+      - .auth.env
+    environment:
+      PG_DATA: /var/lib/postgresql/data
+    ports:
+      - 5434:5432
+    volumes:
+      - authdb:/var/lib/postgresql/data
+  profile-db:
+    container_name: profile-db
+    image: postgres:12
+    env_file:
+      - .profile.env
+    environment:
+      PG_DATA: /var/lib/postgresql/data
+    ports:
+      - 5433:5432
+    volumes:
+      - profiledb:/var/lib/postgresql/data
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    hostname: rabbitmq
+    volumes:
+      - /var/lib/rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+
+volumes:
+  authdb:
+  profiledb:
