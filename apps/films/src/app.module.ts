@@ -1,9 +1,11 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { SequelizeModule } from "@nestjs/sequelize";
-import { Profile } from "./profiles/profiles.model";
-import { ProfilesModule } from "./profiles/profiles.module";
-
+import { FilmsModule } from "./films/films.module";
+import { Films } from "./films/films.model";
+import { GenresModule } from "./genre/genres.module";
+import { GenresFilms } from "./films/genres-films.model";
+import { Genres } from "./genre/genres.model";
 
 @Module({
     controllers: [],
@@ -13,16 +15,18 @@ import { ProfilesModule } from "./profiles/profiles.module";
            envFilePath: `.env`
         }),
         SequelizeModule.forRoot({
+            //dialectModule: require('pg'),
             dialect: 'postgres',
             host: process.env.POSTGRES_HOST,
             port: Number(process.env.POSTGRES_PORT),
-            username: process.env.POSTGRES_USER,
-            password: String(process.env.POSTGRES_PASSWORD),
-            database: process.env.POSTGRES_DB,
-            models: [Profile],
+            username: 'postgres',
+            password: '12345678',
+            database: 'films',
+            models: [Films, Genres, GenresFilms],
             autoLoadModels: true
         }),
-        ProfilesModule,
+        FilmsModule,
+        GenresModule
     ]
 })
 export class AppModule {};
