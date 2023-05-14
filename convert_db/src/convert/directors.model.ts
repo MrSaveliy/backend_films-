@@ -1,20 +1,20 @@
 import {BelongsToMany, Column, DataType, Model, Table} from "sequelize-typescript";
-import { GenresFilms } from "./films-genres.model";
 import { FilmMain } from "./films.model";
+import { DirectorsFilms } from "./directors-films.model";
 
-@Table({tableName: 'genres', timestamps: false})
-export class Genre extends Model<Genre> {
+@Table({tableName: 'directors', timestamps: false})
+export class Director extends Model<Director> {
 
     @Column({type: DataType.INTEGER, unique: true, autoIncrement: true, primaryKey: true})
     id: number;
 
-    @Column({type: DataType.STRING(16)})
+    @Column({type: DataType.STRING})
     lang: string;
 
     @Column({type: DataType.STRING, unique: true})
-    name: string;
+    fullName: string;
 
-    @BelongsToMany(() => FilmMain, () => GenresFilms)
-    films: FilmMain[];
+    /*@BelongsToMany(() => FilmMain, () => DirectorsFilms)
+    films: FilmMain[];*/
 
 }

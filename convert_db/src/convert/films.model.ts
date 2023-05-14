@@ -1,69 +1,74 @@
-import {BelongsToMany, Column, DataType, Model, Table} from "sequelize-typescript";
+import {BelongsToMany, Column, DataType, HasMany, Model, Table} from "sequelize-typescript";
 import { Genre } from "./genres.model";
 import { GenresFilms } from "./films-genres.model";
+import { Country } from "./countries.model";
+import { CountriesFilms } from "./countries-films.model";
+import { Director } from "./directors.model";
+import { DirectorsFilms } from "./directors-films.model";
+import { FilmLang } from "./films-lang.model";
+import { PersonMain } from "./persons-main.model";
+import { FilmsActors } from "./films-actors.model";
 
-interface FilmCreationAttrs {
-    films_name: string;
+/*interface FilmMainCreationAttrs {
     films_link: string;
     films_trailer: string;
     films_date: string;
-    films_list_country: string[];
-    films_list_director: string[];
     films_grade: string;
     films_total_grade: string;
     films_r: string;
     films_age: string;
-    films_time: string;
-    films_list_actor: string[];
     films_picture: string;
-}
+}*/
 
-@Table({tableName: 'films', timestamps: false})
-export class Film extends Model<Film, FilmCreationAttrs> {
+@Table({tableName: 'films_main', timestamps: false, underscored: true})
+export class FilmMain extends Model<FilmMain> {
 
     @Column({type: DataType.INTEGER, unique: true, autoIncrement: true, primaryKey: true})
     id: number;
 
-    @Column({type: DataType.STRING})
-    films_name: string;
+    @HasMany(() => FilmLang)
+    filmLang: FilmLang[];
 
     @Column({type: DataType.STRING})
-    films_link: string;
+    filmType: string;
 
     @Column({type: DataType.STRING})
-    films_trailer: string;
+    filmLink: string;
 
     @Column({type: DataType.STRING})
-    films_date: string;
+    filmTrailer: string;
 
-    @Column({type: DataType.ARRAY(DataType.STRING)})
-    films_list_country: string[];
+    @Column({type: DataType.INTEGER})
+    filmYear: number;
+
+    @Column({type: DataType.INTEGER})
+    filmTime: number;
+
+    @BelongsToMany(() => Country, () => CountriesFilms)
+    countries: Country[];
 
     @BelongsToMany(() => Genre, () => GenresFilms)
     genres: Genre[];
 
-    @Column({type: DataType.ARRAY(DataType.STRING)})
-    films_list_director: string[];
+    @BelongsToMany(() => PersonMain, () => DirectorsFilms)
+    directors: PersonMain[];
+
+    @Column({type: DataType.DOUBLE})
+    filmGrade: number;
+
+    @Column({type: DataType.INTEGER})
+    filmTotalGrade: number;
+
+    @Column({type: DataType.STRING(16)})
+    filmR: string;
+
+    @Column({type: DataType.STRING(16)})
+    filmAge: string;
+
+    @BelongsToMany(() => PersonMain, () => FilmsActors)
+    actors: PersonMain[];
 
     @Column({type: DataType.STRING})
-    films_grade: string;
-
-    @Column({type: DataType.STRING})
-    films_total_grade: string;
-
-    @Column({type: DataType.STRING})
-    films_r: string;
-
-    @Column({type: DataType.STRING})
-    films_age: string;
-
-    @Column({type: DataType.STRING})
-    films_time: string;
-
-    @Column({type: DataType.ARRAY(DataType.STRING)})
-    films_list_actor: string[];
-
-    @Column({type: DataType.TEXT})
-    films_picture: string;
+    filmPoster: string;
 
 }
