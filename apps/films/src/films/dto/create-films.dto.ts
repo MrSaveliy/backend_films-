@@ -13,4 +13,5 @@ export class CreateFilmsDto {
     readonly films_time: string;
     readonly films_list_actor: string;
     readonly films_picture: string;
+    readonly filmTyp: string;
 }

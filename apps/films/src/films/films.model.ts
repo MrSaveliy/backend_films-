@@ -1,83 +1,75 @@
 import { ApiProperty } from "@nestjs/swagger/dist/decorators";
-import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from "sequelize-typescript";
+import { BelongsTo, BelongsToMany, Column, DataType, ForeignKey, HasMany, Model, Table } from "sequelize-typescript";
+import { Genres } from "../genre/genres.model";
+import { GenresFilms } from "./genres-films.model";
+import { Country } from "../country/country.model";
+import { CountriesFilms } from "./countries-films.model";
+import { FilmLang } from "./films-lang.model";
 
-interface FilmsCreationAttrs {
-    films_link: string;
-    films_name: string;
-    films_trailer: string;
-    films_date: string;
-    films_list_country: string;
-    films_list_genre: string;
-    films_list_director: string;
-    films_grade: string;
-    films_total_grade: string;
-    films_age: string;
-    films_r: string;
-    films_time: string;
-    films_list_actor: string;
-    films_picture: string;
-}
+// interface FilmsCreationAttrs {
+//     films_link: string;
+//     films_name: string;
+//     films_trailer: string;
+//     films_date: string;
+//     films_list_country: string;
+//     films_list_genre: string;
+//     films_list_director: string;
+//     films_grade: string;
+//     films_total_grade: string;
+//     films_age: string;
+//     films_r: string;
+//     films_time: string;
+//     films_list_actor: string;
+//     films_picture: string;
+//     filmType: string;
+// }
 
 @Table( {tableName: 'films', underscored: true, timestamps: false })
-export class Films extends Model<Films, FilmsCreationAttrs > {
+export class Films extends Model<Films> {
 
-    @ApiProperty({example: '1', description: 'Уникальный индентификатор'})
-    @Column({type: DataType.INTEGER, unique: true, autoIncrement: true, primaryKey: true })
+    @Column({type: DataType.INTEGER, unique: true, autoIncrement: true, primaryKey: true})
     id: number;
 
-    @ApiProperty({example: '1+1', description: 'Название фильма'})
-    @Column({type: DataType.STRING, allowNull: false })
-    films_name: string;
+    @HasMany(() => FilmLang)
+    filmLang: FilmLang[];
 
-    @ApiProperty({example: 'https://www.kinopoisk.ru/film/435/', description: 'Ссылка на фильм'})
-    @Column({type: DataType.STRING, unique: true, allowNull: false })
-    films_link: string;
+    @Column({type: DataType.STRING})
+    filmType: string;
 
-    @ApiProperty({example: 'https://www.kinopoisk.ru/film/435/', description: 'Ссылка на трейлер фильма'})
-    @Column({type: DataType.STRING, allowNull: false })
-    films_trailer: string;
+    @Column({type: DataType.STRING})
+    filmLink: string;
 
-    @ApiProperty({example: '2011', description: 'Год выпуска фильма'})
-    @Column({type: DataType.STRING, allowNull: false })
-    films_date: string;
+    @Column({type: DataType.STRING})
+    filmTrailer: string;
 
-    @ApiProperty({example: '[Великобритания, США]', description: 'Список стран производства фильма'})
-    @Column({type: DataType.STRING, allowNull: false })
-    films_list_country: string;
+    @Column({type: DataType.INTEGER})
+    filmYear: number;
 
-    @ApiProperty({example: '[драма, приключение]', description: 'Список жанров фильма'})
-    @Column({type: DataType.STRING, allowNull: false })
-    films_list_genre: string;
+    @Column({type: DataType.INTEGER})
+    filmTime: number;
 
-    @ApiProperty({example: '[]', description: 'Список актеров'})
-    @Column({type: DataType.STRING, allowNull: false })
-    films_list_director: string;
+    @BelongsToMany(() => Country, () => CountriesFilms)
+    countries: Country[];
 
-    @ApiProperty({example: '8.8', description: 'Средняя оценка фильма'})
-    @Column({type: DataType.STRING, allowNull: false })
-    films_grade: string;
+    @BelongsToMany(() => Genres, () => GenresFilms)
+    genres: Genres[];
 
-    @ApiProperty({example: '1123', description: 'Количество оценок фильма'})
-    @Column({type: DataType.STRING, allowNull: false })
-    films_total_grade: string;
+    @Column({type: DataType.DOUBLE})
+    filmGrade: number;
 
-    @ApiProperty({example: '18+', description: 'Ограничение по возрасту'})
-    @Column({type: DataType.STRING, allowNull: false })
-    films_age: string;
+    @Column({type: DataType.INTEGER})
+    filmTotalGrade: number;
 
-    @ApiProperty({example: 'R', description: 'Рейтинг'})
-    @Column({type: DataType.STRING, allowNull: false })
-    films_r: string;
+    @Column({type: DataType.STRING(16)})
+    filmR: string;
 
-    @ApiProperty({example: '1+1', description: 'Длительность фильма'})
-    @Column({type: DataType.STRING, allowNull: false })
-    films_time: string;
+    @Column({type: DataType.STRING(16)})
+    filmAge: string;
 
-    @ApiProperty({example: '1+1', description: 'Список актеров'})
-    @Column({type: DataType.STRING, allowNull: false })
-    films_list_actor: string;
+    @Column({type: DataType.STRING})
+    filmPoster: string;
 
-    @ApiProperty({example: '1+1', description: 'Ссылка на фото фильма'})
-    @Column({type: DataType.TEXT, allowNull: false })
-    films_picture: string;
+    @BelongsToMany(() => Genres, () => GenresFilms)
+    genre: Genres[];
+
 }

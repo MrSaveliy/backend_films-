@@ -19,7 +19,4 @@ export class GenresService {
         const users = await this.genresRepository.findAll({include: {all: true}});
         return users;
     }
-
-    
-
 }

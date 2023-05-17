@@ -3,6 +3,8 @@ import { ConfigModule } from "@nestjs/config";
 import { SequelizeModule } from "@nestjs/sequelize";
 import { Profile } from "./profiles/profiles.model";
 import { ProfilesModule } from "./profiles/profiles.module";
+import { Reviews } from "./rewiews/reviews.model";
+import { ReviewsModule } from "./rewiews/reviews.module";
 
 
 @Module({
@@ -19,10 +21,11 @@ import { ProfilesModule } from "./profiles/profiles.module";
             username: process.env.POSTGRES_USER,
             password: String(process.env.POSTGRES_PASSWORD),
             database: process.env.POSTGRES_DB,
-            models: [Profile],
+            models: [Profile, Reviews],
             autoLoadModels: true
         }),
         ProfilesModule,
+        ReviewsModule
     ]
 })
 export class AppModule {};

@@ -18,9 +18,15 @@ export class FilmsController {
         return await this.filmsService.getAll();
     }
 
-    @Get('/films_name/:films_name')
-    async getFilmsByName(@Param('films_name') films_name: string) {
-        const film = await this.filmsService.getFilmsByName(films_name)
+    @Get('/filmName/:filmName')
+    async getFilmsByName(@Param('filmName') filmName: string) {
+        const film = await this.filmsService.getFilmsByName(filmName)
+        return film;
+    }
+
+    @Get('/filmType/:filmType')
+    async getFilmsByType(@Param('filmType') filmType: string) {
+        const film = await this.filmsService.getFilmsByType(filmType)
         return film;
     }
 
@@ -30,21 +36,21 @@ export class FilmsController {
         return film;
     }
 
-    @Get('/country/:country')
-    async getFilmsByCountry(@Param('country')  films_list_country: Object) {
-        const film = await this.filmsService.getFilmsByCountry(films_list_country);
-        return film;
-    }
+    // @Get('/country/:country')
+    // async getFilmsByCountry(@Param('country')  films_list_country: Object) {
+    //     const film = await this.filmsService.getFilmsByCountry(films_list_country);
+    //     return film;
+    // }
 
     @Get('/genres/:genres')
-    async getFilmsByGenres(@Param('genres')  genres: string) {
-        const film = await this.filmsService.getFilmsByCountry(genres);
-        return film;
+    async getFilmsByGenres(@Param('genres')  name: string) {
+        const films = await this.filmsService.getFilmsByGenres(name);
+        return films;
     }
 
-    @Get('/date/:date')
-    async getFilmsByDate(@Param('date')  films_date: string) {
-        const film = await this.filmsService.getFilmsByDate(films_date);
+    @Get('/year/:year')
+    async getFilmsByDate(@Param('year')  filmYear: number) {
+        const film = await this.filmsService.getFilmsByYear(filmYear);
         return film;
     }
 

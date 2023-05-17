@@ -1,4 +1,4 @@
-export class CreateGenresDto {
+export class CreateCountryDto {
     readonly lang: string;
     readonly name: string;
 }
