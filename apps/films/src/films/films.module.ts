@@ -6,13 +6,13 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { SharedModule } from '@app/common';
 import { ConfigModule } from '@nestjs/config';
-import { GenresFilms } from './genres-films.model';
+import { GenresFilms } from '../genre/genres-films.model';
 import { GenresService } from '../genre/genres.service';
 import { GenresModule } from '../genre/genres.module';
 import { Genres } from '../genre/genres.model';
 import { CountryModule } from '../country/country.module';
 import { CountryService } from '../country/country.service';
-import { CountriesFilms } from './countries-films.model';
+import { CountriesFilms } from '../country/countries-films.model';
 import { Country } from '../country/country.model';
 import { FilmLang } from './films-lang.model';
 

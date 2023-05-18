@@ -2,10 +2,10 @@ import { InjectModel } from "@nestjs/sequelize";
 import { Films } from "./films.model";
 import { Injectable } from "@nestjs/common";
 import { CreateFilmsDto } from "./dto/create-films.dto";
-import { GenresFilms } from "./genres-films.model";
+import { GenresFilms } from "../genre/genres-films.model";
 import { Genres } from "../genre/genres.model";
 import { Country } from "../country/country.model";
-import { CountriesFilms } from "./countries-films.model";
+import { CountriesFilms } from "../country/countries-films.model";
 import { FilmLang } from "./films-lang.model";
 
 

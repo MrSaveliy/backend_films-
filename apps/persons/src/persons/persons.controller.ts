@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, Post } from "@nestjs/common";
 import { PersonsService } from "./persons.service";
 import { CreatePersonsDto } from "./dto/create-persons.dto";
 
-@Controller('Persons')
+@Controller('persons')
 export class PersonsController {
     constructor(private personsService: PersonsService) {}
 
@@ -16,9 +16,9 @@ export class PersonsController {
         return this.personsService.getAll();
     }
 
-    @Get('/Persons_name/:Persons_name')
-    async getPersonsByName(@Param('Persons_name') Persons_name: string) {
-        const film = await this.personsService.getPersonsByName(Persons_name)
+    @Get('/personName/:personName')
+    async getPersonsByName(@Param('personName') personName: string) {
+        const film = await this.personsService.getPersonsByName(personName)
         return film;
     }
 

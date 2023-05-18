@@ -13,8 +13,8 @@ interface PersonsCreationAttrs {
     persons_list_films: string;
 };
 
-@Table({tableName: 'persons_main', timestamps: false, underscored: true})
-export class PersonMain extends Model<PersonMain> {
+@Table({tableName: 'persons', timestamps: false, underscored: true})
+export class Persons extends Model<Persons> {
 
     @Column({type: DataType.INTEGER, unique: true, autoIncrement: true, primaryKey: true})
     id: number;

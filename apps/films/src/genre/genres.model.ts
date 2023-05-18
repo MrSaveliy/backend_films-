@@ -1,5 +1,5 @@
 import {BelongsToMany, Column, DataType, Model, Table} from "sequelize-typescript";
-import { GenresFilms } from "../films/genres-films.model";
+import { GenresFilms } from "./genres-films.model";
 import { Films } from "../films/films.model";
 
 

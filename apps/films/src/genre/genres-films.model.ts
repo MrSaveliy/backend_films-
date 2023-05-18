@@ -1,7 +1,7 @@
 import {BelongsTo, Column, DataType, ForeignKey, Model, Table} from "sequelize-typescript";
 
-import { Films } from "./films.model";
-import { Genres } from "../genre/genres.model";
+import { Films } from "../films/films.model";
+import { Genres } from "./genres.model";
 
 @Table({tableName: 'genres_films', timestamps: false, underscored: true})
 export class GenresFilms extends Model<GenresFilms> {

@@ -1,9 +1,9 @@
 import { ApiProperty } from "@nestjs/swagger/dist/decorators";
 import { BelongsTo, BelongsToMany, Column, DataType, ForeignKey, HasMany, Model, Table } from "sequelize-typescript";
 import { Genres } from "../genre/genres.model";
-import { GenresFilms } from "./genres-films.model";
+import { GenresFilms } from "../genre/genres-films.model";
 import { Country } from "../country/country.model";
-import { CountriesFilms } from "./countries-films.model";
+import { CountriesFilms } from "../country/countries-films.model";
 import { FilmLang } from "./films-lang.model";
 
 // interface FilmsCreationAttrs {
@@ -68,8 +68,5 @@ export class Films extends Model<Films> {
 
     @Column({type: DataType.STRING})
     filmPoster: string;
-
-    @BelongsToMany(() => Genres, () => GenresFilms)
-    genre: Genres[];
 
 }

@@ -1,6 +1,6 @@
 import {Column, DataType, ForeignKey, Model, Table} from "sequelize-typescript";
-import { Films } from "./films.model";
-import { Country } from "../country/country.model";
+import { Films } from "../films/films.model";
+import { Country } from "./country.model";
 
 
 @Table({tableName: 'countries_films', timestamps: false, underscored: true})

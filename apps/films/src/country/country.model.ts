@@ -1,6 +1,6 @@
 import { BelongsToMany, Column, DataType, Model, Table } from "sequelize-typescript";
 import { Films } from "../films/films.model";
-import { CountriesFilms } from "../films/countries-films.model";
+import { CountriesFilms } from "./countries-films.model";
 
 
 
