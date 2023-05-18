@@ -3,7 +3,6 @@ import { Genre } from "./genres.model";
 import { GenresFilms } from "./films-genres.model";
 import { Country } from "./countries.model";
 import { CountriesFilms } from "./countries-films.model";
-import { Director } from "./directors.model";
 import { DirectorsFilms } from "./directors-films.model";
 import { FilmLang } from "./films-lang.model";
 import { PersonMain } from "./persons-main.model";

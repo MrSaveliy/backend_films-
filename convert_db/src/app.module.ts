@@ -9,7 +9,6 @@ import { Genre } from './convert/genres.model';
 import { FilmLang } from './convert/films-lang.model';
 import { Country } from './convert/countries.model';
 import { CountriesFilms } from './convert/countries-films.model';
-import { Director } from './convert/directors.model';
 import { DirectorsFilms } from './convert/directors-films.model';
 import { PersonMain } from './convert/persons-main.model';
 import { PersonLang } from './convert/persons-lang.model';
@@ -36,7 +35,6 @@ import { FilmsActors } from './convert/films-actors.model';
                 Genre,
                 Country,
                 CountriesFilms,
-                Director,
                 DirectorsFilms,
                 PersonMain,
                 PersonLang,

@@ -6,7 +6,6 @@ import { Genre } from './genres.model';
 import { GenresFilms } from './films-genres.model';
 import { Op, Sequelize } from 'sequelize';
 import { FilmLang } from './films-lang.model';
-import { Director } from './directors.model';
 import { DirectorsFilms } from './directors-films.model';
 import { Country } from './countries.model';
 import { CountriesFilms } from './countries-films.model';
@@ -14,7 +13,6 @@ import { PersonMain } from './persons-main.model';
 import { PersonLang } from './persons-lang.model';
 import { FilmsActors } from './films-actors.model';
 import { PersonOld } from './persons-old.model';
-import { IsNull } from 'sequelize-typescript';
 
 @Injectable()
 export class ConvertService {
@@ -23,7 +21,6 @@ export class ConvertService {
         @InjectModel(FilmWithGenres) private filmWGenresRepository: typeof FilmWithGenres,
         @InjectModel(FilmMain) private filmRepository: typeof FilmMain,
         @InjectModel(FilmLang) private filmLangRepository: typeof FilmLang,
-        @InjectModel(Director) private directorRepository: typeof Director,
         @InjectModel(DirectorsFilms) private directorFilmRepository: typeof DirectorsFilms,
         @InjectModel(Country) private countryRepository: typeof Country,
         @InjectModel(CountriesFilms) private countryFilmRepository: typeof CountriesFilms,

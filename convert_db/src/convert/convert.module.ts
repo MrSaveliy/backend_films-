@@ -12,7 +12,6 @@ import { PersonOld } from './persons-old.model';
 import { CountriesFilms } from './countries-films.model';
 import { Country } from './countries.model';
 import { DirectorsFilms } from './directors-films.model';
-import { Director } from './directors.model';
 import { FilmsActors } from './films-actors.model';
 import { FilmLang } from './films-lang.model';
 
@@ -28,7 +27,6 @@ import { FilmLang } from './films-lang.model';
             Genre,
             Country,
             CountriesFilms,
-            Director,
             DirectorsFilms,
             PersonMain,
             PersonLang,
