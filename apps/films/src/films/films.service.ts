@@ -52,6 +52,14 @@ export class FilmsService {
         return film;
     }*/
 
+    async getFilmsSets(lang: string) {
+        const bestFilmsSet = await this.getBestFilmsSet(lang);
+        const bestFantasyFilmsSet = await this.getBestFantasyFilmsSet(lang);
+        const familyFriendlyComediesSet = await this.getFamilyFriendlyComediesSet(lang);
+
+        return {bestFilmsSet, bestFantasyFilmsSet, familyFriendlyComediesSet};
+    }
+
     async getFilmById(id: number, lang: string) {
         let film = await this.filmsRepository.findByPk(id, {
             include: [
@@ -164,11 +172,95 @@ export class FilmsService {
         })
     }
 
+    private async getBestFilmsSet(lang: string) {
+        return await this.filmsRepository.findAll({
+            limit: 30,
+            order: ['filmGrade', 'DESC'],
+            attributes: ['filmPoster', 'filmGrade', 'filmYear', 'filmTime', 'filmAge'],
+            include: [
+                {
+                    model: FilmLang,
+                    attributes: ['lang', 'filmName'],
+                },
+                {
+                    model: Genre,
+                    where: { lang: lang },
+                    attributes: ['id', 'name'],
+                    through: { attributes: [] }
+                },
+                {
+                    model: Country,
+                    limit: 1,
+                    where: { lang: lang },
+                    attributes: ['id', 'name'],
+                    through: { attributes: [] },
+                },
+            ]
+        });
+    }
+
+    private async getBestFantasyFilmsSet(lang: string) {
+        return await this.filmsRepository.findAll({
+            limit: 30,
+            order: ['filmGrade', 'DESC'],
+            attributes: ['filmPoster', 'filmGrade', 'filmYear', 'filmTime', 'filmAge'],
+            include: [
+                {
+                    model: FilmLang,
+                    attributes: ['lang', 'filmName'],
+                },
+                {
+                    model: Genre,
+                    where: { lang: lang, name: 'фэнтези' },
+                    attributes: ['id', 'name'],
+                    through: { attributes: [] }
+                },
+                {
+                    model: Country,
+                    limit: 1,
+                    where: { lang: lang },
+                    attributes: ['id', 'name'],
+                    through: { attributes: [] },
+                },
+            ]
+        });
+    }
+
+    private async getFamilyFriendlyComediesSet(lang: string) {
+        return await this.filmsRepository.findAll({
+            limit: 30,
+            attributes: ['filmPoster', 'filmGrade', 'filmYear', 'filmTime', 'filmAge'],
+            where: { filmAge: 6 },
+            include: [
+                {
+                    model: FilmLang,
+                    attributes: ['lang', 'filmName'],
+                },
+                {
+                    model: Genre,
+                    where: { lang: lang, name: 'комедия' },
+                    attributes: ['id', 'name'],
+                    through: { attributes: [] }
+                },
+                {
+                    model: Country,
+                    limit: 1,
+                    where: { lang: lang },
+                    attributes: ['id', 'name'],
+                    through: { attributes: [] },
+                },
+            ]
+        });
+    }
+
     private async getSimilarFilms(film: Film, lang: string) {
         return await this.filmsRepository.findAll({
             limit: 28,
             order: ['filmGrade', 'DESC'],
             attributes: ['filmPoster', 'filmGrade', 'filmYear', 'filmTime', 'filmAge'],
+            where: { 
+                id: { [Op.ne]: film.id },
+            },
             include: [
                 {
                     model: FilmLang,
