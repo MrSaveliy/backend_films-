@@ -6,7 +6,7 @@ interface TokenCreationAttrs {
     userId: number;
 }
 
-@Table({ tableName: 'token' })
+@Table({ tableName: 'token', underscored: true })
 export class Token extends Model<Token, TokenCreationAttrs> {
 
     @Column({ type: DataType.TEXT, primaryKey: true })
