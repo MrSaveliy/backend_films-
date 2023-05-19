@@ -1,6 +1,7 @@
 import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Query } from "@nestjs/common";
 import { FilmsService } from "./films.service";
 import { CreateFilmsDto } from "./dto/create-films.dto";
+import { MessagePattern } from "@nestjs/microservices";
 
 
 @Controller('films')
@@ -30,9 +31,10 @@ export class FilmsController {
         return film;
     }
 
-    @Get('/id/:id')
+    @Get('/:id')
     async getFilmsById(@Param('id')  id: number) {
-        const film = await this.filmsService.getFilmsById(id);
+        const lang = '??'   //Пока хз, как мы будем его получать
+        const film = await this.filmsService.getFilmById(id, lang);
         return film;
     }
 
@@ -42,10 +44,32 @@ export class FilmsController {
     //     return film;
     // }
 
-    @Get('/genres/:genres')
+    /*@Get('/genres/:genres')
     async getFilmsByGenres(@Param('genres')  name: string) {
         const films = await this.filmsService.getFilmsByGenres(name);
         return films;
+    }*/
+
+    //Скорее всего, основным методом для поиска фильмов будет что-то типа этого
+    //Post или Get - тут хз, надо ребят с фронта спрашивать
+    //Так же как и то, как именно мы filters получаем
+    //Набросал пока для примера
+    @Post('/*')
+    getFilmsByFilters(filters) {
+        const countries = filters.countries;
+        const genres = filters.genres;
+        const lang = filters.lang;
+
+        return this.filmsService.getFilmsByFilters(countries, genres, lang);
+    }
+
+    //Это чтобы отдавать сервису личностей по запросу конкретной личности фильмы,
+    //в которых эта личность участвовала
+    @MessagePattern('films-request')
+    getFilmsByPerson(request) {
+        const filmsId = request.filmsId;
+        const lang = request.lang;
+        return this.filmsService.getFilmsByPerson(filmsId, lang);
     }
 
     @Get('/year/:year')

@@ -1,9 +1,9 @@
 import { ApiProperty } from "@nestjs/swagger/dist/decorators";
-import { BelongsTo, BelongsToMany, Column, DataType, ForeignKey, HasMany, Model, Table } from "sequelize-typescript";
-import { Genres } from "../genre/genres.model";
-import { GenresFilms } from "../genre/genres-films.model";
-import { Country } from "../country/country.model";
-import { CountriesFilms } from "../country/countries-films.model";
+import { BelongsToMany, Column, DataType, HasMany, Model, Table } from "sequelize-typescript";
+import { Genre } from "../genres/genres.model";
+import { GenresFilms } from "../genres/genres-films.model";
+import { Country } from "../countries/countries.model";
+import { CountriesFilms } from "../countries/countries-films.model";
 import { FilmLang } from "./films-lang.model";
 
 // interface FilmsCreationAttrs {
@@ -25,7 +25,7 @@ import { FilmLang } from "./films-lang.model";
 // }
 
 @Table( {tableName: 'films', underscored: true, timestamps: false })
-export class Films extends Model<Films> {
+export class Film extends Model<Film> {
 
     @Column({type: DataType.INTEGER, unique: true, autoIncrement: true, primaryKey: true})
     id: number;
@@ -51,8 +51,8 @@ export class Films extends Model<Films> {
     @BelongsToMany(() => Country, () => CountriesFilms)
     countries: Country[];
 
-    @BelongsToMany(() => Genres, () => GenresFilms)
-    genres: Genres[];
+    @BelongsToMany(() => Genre, () => GenresFilms)
+    genres: Genre[];
 
     @Column({type: DataType.DOUBLE})
     filmGrade: number;
@@ -68,5 +68,15 @@ export class Films extends Model<Films> {
 
     @Column({type: DataType.STRING})
     filmPoster: string;
+
+    //Считай, что это поля-плейсхолдеры
+    //Их нет в самой таблице в бд, они нужны только чтобы в сервисе можно было удобно подцепить актеров и режиссеров,
+    //полученных из сервиса с личностями
+    //films.datavalues.actors и films.datavalues.directors - это вот эти строчки
+    directors;
+
+    actors;
+
+    similarFilms;
 
 }

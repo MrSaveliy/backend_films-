@@ -1,10 +1,10 @@
 import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from "sequelize-typescript";
-import { Persons } from "./persons.model";
+import { Person } from "./persons.model";
 
 @Table({tableName: 'films_actors', timestamps: false, underscored: true})
 export class FilmsActors extends Model<FilmsActors> {
 
-    @ForeignKey(() => Persons)
+    @ForeignKey(() => Person)
     @Column({type: DataType.INTEGER, primaryKey: true})
     actorId: number;
 

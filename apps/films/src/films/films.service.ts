@@ -1,82 +1,264 @@
 import { InjectModel } from "@nestjs/sequelize";
-import { Films } from "./films.model";
-import { Injectable } from "@nestjs/common";
+import { Film } from "./films.model";
+import { Inject, Injectable } from "@nestjs/common";
 import { CreateFilmsDto } from "./dto/create-films.dto";
-import { GenresFilms } from "../genre/genres-films.model";
-import { Genres } from "../genre/genres.model";
-import { Country } from "../country/country.model";
-import { CountriesFilms } from "../country/countries-films.model";
+import { Genre } from "../genres/genres.model";
+import { Country } from "../countries/countries.model";
 import { FilmLang } from "./films-lang.model";
+import { Op } from "sequelize";
+import { firstValueFrom } from "rxjs";
+import { ClientProxy } from "@nestjs/microservices";
 
 
 @Injectable()
 export class FilmsService {
-    constructor (@InjectModel(Films) private filmsRepository: typeof Films,
-    @InjectModel(Genres) private genresRepository: typeof Genres,
-    @InjectModel(GenresFilms) private genresfilmsRepository: typeof GenresFilms,
-    @InjectModel(Country) private countryRepository: typeof Country,
-    @InjectModel(CountriesFilms) private countriesfilmsRepository: typeof CountriesFilms,
-    @InjectModel(FilmLang) private filmlangRepository: typeof FilmLang) {}
-    
+
+    constructor(
+        @InjectModel(Film) private filmsRepository: typeof Film,
+        @InjectModel(FilmLang) private filmlangRepository: typeof FilmLang,
+        @Inject('films_service') private client: ClientProxy,) { }
+
     async createFilms(dto: CreateFilmsDto) {
         const films = await this.filmsRepository.create(dto);
         return films;
     }
 
     async getAll() {
-        const films = await this.filmsRepository.findAll({include: {all: true}});
+        const films = await this.filmsRepository.findAll({ include: { all: true } });
         return films;
     }
 
     async getFilmsByName(filmName: string) {
         const film = await this.filmlangRepository.findOne({
-            where: { filmName }, 
-            include: {all: true}
+            where: { filmName },
+            include: { all: true }
         });
         return film;
     }
 
     async getFilmsByType(filmType: string) {
         const film = await this.filmsRepository.findOne({
-           where: {filmType}, 
-           include: {all: true}
-       });
-       return film;
+            where: { filmType },
+            include: { all: true }
+        });
+        return film;
     }
-   
-    async getFilmsById(id: number) {
+
+    /*async getFilmsById(id: number) {
         const film = await this.filmsRepository.findByPk(id);
         if (!film) {
-          throw new Error('Films not found');
+            throw new Error('Films not found');
         }
         return film;
-      }
-    
-    // async getFilmsByCountry(films_list_country: Object ) {
-    //     const film = await this.filmsRepository.findAll({
-    //         where: { films_list_country }, include: {all: true}});
-    //     return film;
-    // }
+    }*/
 
-    async getFilmsByGenres(name: string ) {
-        const genre = await this.genresRepository.findOne({
-            where: {name}
+    async getFilmById(id: number, lang: string) {
+        let film = await this.filmsRepository.findByPk(id, {
+            include: [
+                {
+                    model: FilmLang,
+                    attributes: ['lang', 'filmName', 'filmDescription'],
+                },
+                {
+                    model: Genre,
+                    where: { lang: lang },
+                    attributes: ['id', 'name'],
+                    through: { attributes: [] }
+                },
+                {
+                    model: Country,
+                    where: { lang: lang },
+                    attributes: ['id', 'name'],
+                    through: { attributes: [] },
+                },
+            ]
         });
-        if (!name) {
-            throw new Error('Invalid name parameter');
-          }
-        const filmsId = await this.genresfilmsRepository.findAll({
-            where: { genreId: genre.id }, 
-            include: {model: Films, required: true},
-            attributes: [],
-        });
-        return filmsId;
+
+        film.dataValues.similarFilms = await this.getSimilarFilms(film, lang);
+
+        try {
+            const { actors, directors } = await firstValueFrom(this.client.send("actors-request", { id, lang }));
+
+            film.dataValues.actors = this.mapActorsToFilm(film, actors);
+            film.dataValues.directors = this.mapDirectorsToFilm(film, directors);
+
+            return film;
+        } catch (err) {
+            console.log(err);
+
+            film.dataValues.actors = 'Error: Cannot load actors';
+            film.dataValues.directors = 'Error: Cannot load directors';
+
+            return film;
+        }
     }
 
-    async getFilmsByYear(filmYear: number ) {
+    async getFilmsByFilters(countries, genres, lang: string) {
+        /*const genres = ["драма"];
+        const countries = ['США'];
+        const lang = 'ru';*/
+        const filmsId = await this.filterIdByGenreAndCountry(genres, countries);
+
+        let films = await this.filmsRepository.findAll({
+            attributes: ['filmPoster', 'filmGrade', 'filmYear', 'filmTime', 'filmAge'],
+            where: {
+                id: {
+                    [Op.in]: [...filmsId]
+                }
+            },
+            include: [
+                {
+                    model: FilmLang,
+                    attributes: ['lang', 'filmName', 'filmDescription'],
+                },
+                {
+                    model: Genre,
+                    where: { lang: lang },
+                    attributes: ['id', 'name'],
+                    through: { attributes: [] }
+                },
+                {
+                    model: Country,
+                    where: { lang: lang },
+                    attributes: ['id', 'name'],
+                    through: { attributes: [] },
+                },
+            ]
+        });
+
+        try {
+            const { actors, directors } = await firstValueFrom(this.client.send("actors-request", { filmsId, lang }));
+
+            films.forEach(film => {
+                film.dataValues.actors = this.mapActorsToFilm(film, actors);
+                film.dataValues.directors = this.mapDirectorsToFilm(film, directors);
+            });
+
+            return films;
+        } catch (err) {
+            console.log(err);
+
+            films.forEach(film => {
+                film.dataValues.actors = 'Error: Cannot load actors';
+                film.dataValues.directors = 'Error: Cannot load directors';
+            });
+
+            return films;
+        }
+
+    }
+
+    async getFilmsByPerson(filmsId, lang) {
+        return await this.filmsRepository.findAll({
+            where: {
+                id: { [Op.in]: [...filmsId] }
+            },
+            attributes: ['id', 'filmYear', 'filmGrade', 'filmPoster'],
+            include: [
+                {
+                    model: FilmLang,
+                    attributes: ['filmName'],
+                    where: { lang: lang },
+                },
+            ]
+        })
+    }
+
+    private async getSimilarFilms(film: Film, lang: string) {
+        return await this.filmsRepository.findAll({
+            limit: 28,
+            order: ['filmGrade', 'DESC'],
+            attributes: ['filmPoster', 'filmGrade', 'filmYear', 'filmTime', 'filmAge'],
+            include: [
+                {
+                    model: FilmLang,
+                    attributes: ['lang', 'filmName'],
+                },
+                {
+                    model: Genre,
+                    where: { lang: lang, name: film.genres[0].name },
+                    attributes: ['id', 'name'],
+                    through: { attributes: [] }
+                },
+                {
+                    model: Country,
+                    limit: 1,
+                    where: { lang: lang },
+                    attributes: ['id', 'name'],
+                    through: { attributes: [] },
+                },
+            ]
+        });
+    }
+
+    private async filterIdByGenreAndCountry(genres, countries) {
+        let genreClause = {};
+        if (genres && genres.length > 0) {
+            genreClause['name'] = { [Op.in]: [...genres] };
+        }
+        let countryClause = {};
+        if (countries && countries.length > 0) {
+            countryClause['name'] = { [Op.in]: [...countries] };
+        }
+
+        const filmsId = await this.filmsRepository.findAll({
+            attributes: ['id'],
+            include: [
+                {
+                    model: Genre,
+                    attributes: [],
+                    through: { attributes: [] },
+                    where: genreClause,
+                },
+                {
+                    model: Country,
+                    attributes: [],
+                    through: { attributes: [] },
+                    where: countryClause,
+                }
+            ],
+            group: ['FilmMain.id'],
+        });
+
+        return filmsId.map(item => item.id);
+    }
+
+    private mapActorsToFilm(film, actors) {
+        return actors
+            .filter(actor =>
+                actor.actorFilms
+                    .filter(item => item.filmId == film.id)
+                    .length
+            )
+            .map(actor => {
+                return {
+                    id: actor.id,
+                    name: actor.personLang[0].personName,
+                    photo: actor.personPicture,
+                }
+            });
+    }
+
+    private mapDirectorsToFilm(film, directors) {
+        return directors
+            .filter(director =>
+                director.directorFilms
+                    .filter(item => item.filmId == film.id)
+                    .length
+            )
+            .map(director => {
+                return {
+                    id: director.id,
+                    name: director.personLang[0].personName,
+                    photo: director.personPicture,
+                }
+            });
+    }
+
+    async getFilmsByYear(filmYear: number) {
         const film = await this.filmsRepository.findAll({
-            where: { filmYear }, 
-            include: {all: true}
+            where: { filmYear },
+            include: { all: true }
         });
         return film;
     }
@@ -84,7 +266,7 @@ export class FilmsService {
     async deleteFilm(id: number) {
         const film = await this.filmsRepository.findByPk(id);
         if (!film) {
-          throw new Error('Films not found');
+            throw new Error('Films not found');
         }
         await film.destroy()
         return film;

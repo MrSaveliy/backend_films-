@@ -42,8 +42,8 @@ export class ProfilesController {
         return userData;
     }
 
-    //@Roles("ADMIN")
-    //@UseGuards(RolesGuard)
+    @Roles("ADMIN")
+    @UseGuards(RolesGuard)
     @Get()
     getAll() {
         return this.profilesService.getAll();

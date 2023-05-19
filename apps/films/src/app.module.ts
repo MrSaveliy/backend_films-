@@ -1,17 +1,15 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { SequelizeModule } from "@nestjs/sequelize";
-import { GenresFilms } from "./genre/genres-films.model";
-import { Genres } from "./genre/genres.model";
-import { Films } from "./films/films.model";
+import { GenresFilms } from "./genres/genres-films.model";
+import { Genre } from "./genres/genres.model";
+import { Film } from "./films/films.model";
 import { FilmsModule } from "./films/films.module";
-import { GenresModule } from "./genre/genres.module";
-import { CountryController } from './country/country.controller';
-import { CountryService } from './country/country.service';
-import { CountryModule } from './country/country.module';
-import { Country } from "./country/country.model";
-import { CountriesFilms} from "./country/countries-films.model";
+import { GenresModule } from "./genres/genres.module";
 import { FilmLang } from "./films/films-lang.model";
+import { CountriesFilms } from "./countries/countries-films.model";
+import { Country } from "./countries/countries.model";
+import { CountriesModule } from "./countries/countries.module";
 
 
 @Module({
@@ -19,7 +17,7 @@ import { FilmLang } from "./films/films-lang.model";
     providers: [],
     imports: [
         ConfigModule.forRoot({
-           envFilePath: `C:\Users\Савелий\Desktop\JS\kino\apps\films\.env`
+           envFilePath: `.env`
         }),
         SequelizeModule.forRoot({
             //dialectModule: require('pg'),
@@ -29,12 +27,12 @@ import { FilmLang } from "./films/films-lang.model";
             username: process.env.POSTGRES_USER,
             password: String(process.env.POSTGRES_PASSWORD),
             database: process.env.POSTGRES_DB,
-            models: [Films, Genres, GenresFilms, Country, CountriesFilms, FilmLang],
+            models: [Film, Genre, GenresFilms, Country, CountriesFilms, FilmLang],
             autoLoadModels: true
         }),
         FilmsModule,
         GenresModule,
-        CountryModule
+        CountriesModule
     ]
 })
 export class AppModule {};

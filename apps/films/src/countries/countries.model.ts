@@ -1,5 +1,5 @@
 import { BelongsToMany, Column, DataType, Model, Table } from "sequelize-typescript";
-import { Films } from "../films/films.model";
+import { Film } from "../films/films.model";
 import { CountriesFilms } from "./countries-films.model";
 
 
@@ -16,7 +16,7 @@ export class Country extends Model<Country> {
     @Column({type: DataType.STRING, unique: true})
     name: string;
 
-    @BelongsToMany(() => Films, () => CountriesFilms)
-    films: Films[];
+    @BelongsToMany(() => Film, () => CountriesFilms)
+    films: Film[];
 
 }

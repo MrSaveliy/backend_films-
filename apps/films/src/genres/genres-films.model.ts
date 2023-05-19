@@ -1,23 +1,23 @@
 import {BelongsTo, Column, DataType, ForeignKey, Model, Table} from "sequelize-typescript";
 
-import { Films } from "../films/films.model";
-import { Genres } from "./genres.model";
+import { Film } from "../films/films.model";
+import { Genre } from "./genres.model";
 
 @Table({tableName: 'genres_films', timestamps: false, underscored: true})
 export class GenresFilms extends Model<GenresFilms> {
 
-    @ForeignKey(() => Genres)
+    @ForeignKey(() => Genre)
     @Column({type: DataType.INTEGER, unique: true, primaryKey: true})
     genreId: number;
 
-    @ForeignKey(() => Films)
+    @ForeignKey(() => Film)
     @Column({type: DataType.INTEGER, unique: true, primaryKey: true})
     filmId: number;
 
-    @BelongsTo(() => Genres)
-    genres: Genres;
+    @BelongsTo(() => Genre)
+    genres: Genre;
 
-    @BelongsTo(() => Films)
-    films: Films;
+    @BelongsTo(() => Film)
+    films: Film;
 
 }

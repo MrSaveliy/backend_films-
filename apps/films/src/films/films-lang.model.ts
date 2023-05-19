@@ -1,5 +1,5 @@
 import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from "sequelize-typescript";
-import { Films } from "./films.model";
+import { Film } from "./films.model";
 
 @Table({tableName: 'films_lang', timestamps: false, underscored: true})
 export class FilmLang extends Model<FilmLang> {
@@ -7,12 +7,12 @@ export class FilmLang extends Model<FilmLang> {
     @Column({type: DataType.INTEGER, unique: true, autoIncrement: true, primaryKey: true})
     id: number;
 
-    @ForeignKey(() => Films)
+    @ForeignKey(() => Film)
     @Column({type: DataType.INTEGER})
     filmId: number;
 
-    @BelongsTo(() => Films, {onDelete: 'CASCADE',  hooks:true})
-    film: Films;
+    @BelongsTo(() => Film, {onDelete: 'CASCADE',  hooks:true})
+    film: Film;
 
     @Column({type: DataType.STRING(16)})
     lang: string;

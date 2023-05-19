@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Param, Post } from "@nestjs/common";
 import { PersonsService } from "./persons.service";
 import { CreatePersonsDto } from "./dto/create-persons.dto";
+import { MessagePattern } from "@nestjs/microservices";
 
 @Controller('persons')
 export class PersonsController {
@@ -8,7 +9,7 @@ export class PersonsController {
 
     @Post()
     create(@Body() dto: CreatePersonsDto) {
-        return this.personsService.createPersonss(dto); 
+        return this.personsService.createPersons(dto); 
     }
     
     @Get()
@@ -22,10 +23,17 @@ export class PersonsController {
         return film;
     }
 
-    @Get('/id/:id')
-    async getPersonsById(@Param('id')  id: number) {
-        const film = await this.personsService.getPersonsById(id);
-        return film;
+    @Get('/:id')
+    async getPersonById(@Param('id')  id: number) {
+        const lang = '??' //Пока хз, как именно мы будем получать этот параметр
+        return this.personsService.getPersonById(id, lang);
+    }
+
+    @MessagePattern("persons-request")
+    getActors(request) {
+        const filmsId = request.filmsId;
+        const lang = request.lang;
+        return this.personsService.getPersons(filmsId, lang);
     }
 
 }
