@@ -34,7 +34,7 @@ export class ConvertService {
 
 
     async convertFilmsDataBase() {
-        let oldFilms = await this.filmWGenresRepository.findAll({ limit: 72, order: [['id', 'ASC']] });
+        let oldFilms = await this.filmWGenresRepository.findAll({ order: [['id', 'ASC']] });
         for (let film of oldFilms) {
             const newFilm = await this.filmRepository.create({
                 id: film.id,
