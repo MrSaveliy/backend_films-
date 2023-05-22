@@ -32,8 +32,9 @@ export class PersonsController {
     @MessagePattern("persons-request")
     getActors(request) {
         const filmsId = request.filmsId;
+        const poster = request.poster;
         const lang = request.lang;
-        return this.personsService.getPersons(filmsId, lang);
+        return this.personsService.getPersons(filmsId, poster, lang);
     }
 
 }

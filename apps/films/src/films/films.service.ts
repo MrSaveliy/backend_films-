@@ -85,7 +85,9 @@ export class FilmsService {
         film.dataValues.similarFilms = await this.getSimilarFilms(film, lang);
 
         try {
-            const { actors, directors } = await firstValueFrom(this.client.send("actors-request", { id, lang }));
+            const { actors, directors } = await firstValueFrom(
+                this.client.send("actors-request", { filmsId: [id], poster: true, lang })
+            );
 
             film.dataValues.actors = this.mapActorsToFilm(film, actors);
             film.dataValues.directors = this.mapDirectorsToFilm(film, directors);
@@ -108,7 +110,7 @@ export class FilmsService {
         const filmsId = await this.filterIdByGenreAndCountry(genres, countries);
 
         let films = await this.filmsRepository.findAll({
-            attributes: ['filmPoster', 'filmGrade', 'filmYear', 'filmTime', 'filmAge'],
+            attributes: ['id', 'filmPoster', 'filmGrade', 'filmYear', 'filmTime', 'filmAge'],
             where: {
                 id: {
                     [Op.in]: [...filmsId]
@@ -135,7 +137,9 @@ export class FilmsService {
         });
 
         try {
-            const { actors, directors } = await firstValueFrom(this.client.send("actors-request", { filmsId, lang }));
+            const { actors, directors } = await firstValueFrom(
+                this.client.send("actors-request", { filmsId, poster: false, lang })
+            );
 
             films.forEach(film => {
                 film.dataValues.actors = this.mapActorsToFilm(film, actors);
@@ -175,8 +179,8 @@ export class FilmsService {
     private async getBestFilmsSet(lang: string) {
         return await this.filmsRepository.findAll({
             limit: 30,
-            order: ['filmGrade', 'DESC'],
-            attributes: ['filmPoster', 'filmGrade', 'filmYear', 'filmTime', 'filmAge'],
+            order: [ ['filmGrade', 'DESC'] ],
+            attributes: ['id', 'filmPoster', 'filmGrade', 'filmYear', 'filmTime', 'filmAge'],
             include: [
                 {
                     model: FilmLang,
@@ -190,7 +194,7 @@ export class FilmsService {
                 },
                 {
                     model: Country,
-                    limit: 1,
+                    //limit: 1,
                     where: { lang: lang },
                     attributes: ['id', 'name'],
                     through: { attributes: [] },
@@ -202,8 +206,8 @@ export class FilmsService {
     private async getBestFantasyFilmsSet(lang: string) {
         return await this.filmsRepository.findAll({
             limit: 30,
-            order: ['filmGrade', 'DESC'],
-            attributes: ['filmPoster', 'filmGrade', 'filmYear', 'filmTime', 'filmAge'],
+            order: [ ['filmGrade', 'DESC'] ],
+            attributes: ['id', 'filmPoster', 'filmGrade', 'filmYear', 'filmTime', 'filmAge'],
             include: [
                 {
                     model: FilmLang,
@@ -217,7 +221,7 @@ export class FilmsService {
                 },
                 {
                     model: Country,
-                    limit: 1,
+                    //limit: 1,
                     where: { lang: lang },
                     attributes: ['id', 'name'],
                     through: { attributes: [] },
@@ -229,8 +233,8 @@ export class FilmsService {
     private async getFamilyFriendlyComediesSet(lang: string) {
         return await this.filmsRepository.findAll({
             limit: 30,
-            attributes: ['filmPoster', 'filmGrade', 'filmYear', 'filmTime', 'filmAge'],
-            where: { filmAge: 6 },
+            attributes: ['id', 'filmPoster', 'filmGrade', 'filmYear', 'filmTime', 'filmAge'],
+            where: { filmAge: '6' },
             include: [
                 {
                     model: FilmLang,
@@ -244,7 +248,7 @@ export class FilmsService {
                 },
                 {
                     model: Country,
-                    limit: 1,
+                    //limit: 1,
                     where: { lang: lang },
                     attributes: ['id', 'name'],
                     through: { attributes: [] },
@@ -256,8 +260,8 @@ export class FilmsService {
     private async getSimilarFilms(film: Film, lang: string) {
         return await this.filmsRepository.findAll({
             limit: 28,
-            order: ['filmGrade', 'DESC'],
-            attributes: ['filmPoster', 'filmGrade', 'filmYear', 'filmTime', 'filmAge'],
+            order: [ ['filmGrade', 'DESC'] ],
+            attributes: ['id', 'filmPoster', 'filmGrade', 'filmYear', 'filmTime', 'filmAge'],
             where: { 
                 id: { [Op.ne]: film.id },
             },
@@ -274,7 +278,7 @@ export class FilmsService {
                 },
                 {
                     model: Country,
-                    limit: 1,
+                    //limit: 1,
                     where: { lang: lang },
                     attributes: ['id', 'name'],
                     through: { attributes: [] },

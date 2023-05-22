@@ -45,13 +45,21 @@ export class PersonsService {
         return Persons;
     }*/
 
-    async getPersons(filmsId, lang) {
-        const actors = await this.getActors(filmsId, lang);
-        const directors = await this.getDirectors(filmsId, lang);
+    async getPersons(filmsId, poster, lang) {
+        const actors = await this.getActors(filmsId, poster, lang);
+        const directors = await this.getDirectors(filmsId, poster, lang);
         return { actors, directors };
     }
 
-    private async getActors(filmsId, lang) {
+    private async getActors(filmsId, poster, lang) {
+        let attr;
+
+        if (poster) {
+            attr = ['id', 'personPicture'];
+        } else {
+            attr = ['id'];
+        }
+
         return await this.personsRepository.findAll({
             attributes: ['id', 'personPicture'],
             include: [
@@ -71,7 +79,15 @@ export class PersonsService {
         });
     }
 
-    private async getDirectors(filmsId, lang) {
+    private async getDirectors(filmsId, poster, lang) {
+        let attr;
+
+        if (poster) {
+            attr = ['id', 'personPicture'];
+        } else {
+            attr = ['id'];
+        }
+        
         return await this.personsRepository.findAll({
             attributes: ['id', 'personPicture'],
             include: [

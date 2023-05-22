@@ -4,34 +4,34 @@ import { CreateFilmsDto } from "./dto/create-films.dto";
 import { MessagePattern } from "@nestjs/microservices";
 
 
-@Controller('films')
+@Controller()
 export class FilmsController {
     
     constructor(private filmsService: FilmsService) {}
 
-    @Post()
+    @Post('films')
     async create(@Body() dto: CreateFilmsDto) {
         return await this.filmsService.createFilms(dto); 
     }
     
-    @Get()
+    @Get('films')
     async getAll() {
         return await this.filmsService.getAll();
     }
 
-    @Get('/filmName/:filmName')
+    @Get('films/filmName/:filmName')
     async getFilmsByName(@Param('filmName') filmName: string) {
         const film = await this.filmsService.getFilmsByName(filmName)
         return film;
     }
 
-    @Get('/filmType/:filmType')
+    @Get('films/filmType/:filmType')
     async getFilmsByType(@Param('filmType') filmType: string) {
         const film = await this.filmsService.getFilmsByType(filmType)
         return film;
     }
 
-    @Get('/:id')
+    @Get('films/:id')
     async getFilmsById(@Param('id')  id: number) {
         const lang = '??'   //Пока хз, как мы будем его получать
         const film = await this.filmsService.getFilmById(id, lang);
@@ -52,7 +52,7 @@ export class FilmsController {
 
 
     //Для главной страницы и для страницы поиска без фильтров
-    @Get(['/main', ''])
+    @Get(['main', 'films'])
     getFilmsSets() {
         const lang = '??'   //Опять язык, который пока хз, как мы будем получать
         return this.filmsService.getFilmsSets(lang);
@@ -62,8 +62,8 @@ export class FilmsController {
     //Post или Get - тут хз, надо ребят с фронта спрашивать
     //Так же как и то, как именно мы filters получаем
     //Набросал пока для примера
-    @Post('/*')
-    getFilmsByFilters(filters) {
+    @Post('films/*')
+    getFilmsByFilters(@Body() filters) {
         const countries = filters.countries;
         const genres = filters.genres;
         const lang = filters.lang;
