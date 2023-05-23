@@ -359,6 +359,16 @@ export class FilmsService {
         return film;
     }
 
+    async updateFilmsName(filmId: number, newFilmsName: string) {
+        const film = await this.filmlangRepository.findOne({
+            where: { filmId },
+            include: { all: true }
+        });
+        film.filmName = newFilmsName;
+        await film.save();
+        return film;
+    }
+
     async deleteFilm(id: number) {
         const film = await this.filmsRepository.findByPk(id);
         if (!film) {

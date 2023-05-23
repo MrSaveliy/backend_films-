@@ -1,36 +1,48 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Query } from "@nestjs/common";
+import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put, Query } from "@nestjs/common";
 import { FilmsService } from "./films.service";
 import { CreateFilmsDto } from "./dto/create-films.dto";
 import { MessagePattern } from "@nestjs/microservices";
+import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { Film } from "./films.model";
 
-
+@ApiTags('films')
 @Controller()
 export class FilmsController {
     
     constructor(private filmsService: FilmsService) {}
 
+    @ApiOperation({summary: "Создание пользователя"})
+    @ApiResponse({status: 200, type: Film})
     @Post('films')
     async create(@Body() dto: CreateFilmsDto) {
         return await this.filmsService.createFilms(dto); 
     }
     
+    @ApiOperation({summary: "Получение всех пользователей"})
+    @ApiResponse({status: 200, type: [Film]})
     @Get('films')
     async getAll() {
         return await this.filmsService.getAll();
     }
 
+    @ApiOperation({summary: "Получение фильма по названию"})
+    @ApiResponse({status: 200, type: Film})
     @Get('films/filmName/:filmName')
     async getFilmsByName(@Param('filmName') filmName: string) {
         const film = await this.filmsService.getFilmsByName(filmName)
         return film;
     }
 
+    @ApiOperation({summary: "Получение пользователя по типу фильма"})
+    @ApiResponse({status: 200, type: Film})
     @Get('films/filmType/:filmType')
     async getFilmsByType(@Param('filmType') filmType: string) {
         const film = await this.filmsService.getFilmsByType(filmType)
         return film;
     }
 
+    @ApiOperation({summary: "Получение пользователя по id"})
+    @ApiResponse({status: 200, type: Film})
     @Get('films/:id')
     async getFilmsById(@Param('id')  id: number) {
         const lang = '??'   //Пока хз, как мы будем его получать
@@ -52,6 +64,8 @@ export class FilmsController {
 
 
     //Для главной страницы и для страницы поиска без фильтров
+    @ApiOperation({summary: "-"})
+    @ApiResponse({status: 200, type: Film})
     @Get(['main', 'films'])
     getFilmsSets() {
         const lang = '??'   //Опять язык, который пока хз, как мы будем получать
@@ -62,6 +76,8 @@ export class FilmsController {
     //Post или Get - тут хз, надо ребят с фронта спрашивать
     //Так же как и то, как именно мы filters получаем
     //Набросал пока для примера
+    @ApiOperation({summary: "Фильры"})
+    @ApiResponse({status: 200, type: Film})
     @Post('films/*')
     getFilmsByFilters(@Body() filters) {
         const countries = filters.countries;
@@ -70,7 +86,7 @@ export class FilmsController {
 
         return this.filmsService.getFilmsByFilters(countries, genres, lang);
     }
-
+    
     //Это чтобы отдавать сервису личностей по запросу конкретной личности фильмы,
     //в которых эта личность участвовала
     @MessagePattern('films-request')
@@ -80,12 +96,27 @@ export class FilmsController {
         return this.filmsService.getFilmsByPerson(filmsId, lang);
     }
 
+    @ApiOperation({summary: "Получение фильма по году создания"})
+    @ApiResponse({status: 200, type: Film})
     @Get('/year/:year')
     async getFilmsByDate(@Param('year')  filmYear: number) {
         const film = await this.filmsService.getFilmsByYear(filmYear);
         return film;
     }
 
+    @ApiOperation({summary: "Изменение названия фильма по id"})
+    @ApiResponse({status: 200, type: Film})
+    @Put(':id/name')
+    async updateFilmsName(@Param('id') id: number, @Body('name') newFilmsName: string) {
+        const film = await this.filmsService.updateFilmsName(id, newFilmsName);
+        if (!film) {
+          throw new NotFoundException(`Film with id ${id} not found`);
+        }
+        return film;
+    }
+
+    @ApiOperation({summary: "Удаление фильма"})
+    @ApiResponse({status: 200, type: Film})
     @Delete(':id')
     async deleteFilm(@Param('id') id: number) {
        return await this.filmsService.deleteFilm(id);

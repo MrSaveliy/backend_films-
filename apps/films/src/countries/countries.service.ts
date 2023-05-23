@@ -18,4 +18,5 @@ export class CountryService {
         const users = await this.countryRepository.findAll({include: {all: true}});
         return users;
     }
+    
 }
