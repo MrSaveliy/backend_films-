@@ -11,14 +11,14 @@ export class FilmsController {
     
     constructor(private filmsService: FilmsService) {}
 
-    @ApiOperation({summary: "Создание пользователя"})
+    @ApiOperation({summary: "Создание фильма"})
     @ApiResponse({status: 200, type: Film})
     @Post('films')
     async create(@Body() dto: CreateFilmsDto) {
         return await this.filmsService.createFilms(dto); 
     }
     
-    @ApiOperation({summary: "Получение всех пользователей"})
+    @ApiOperation({summary: "Получение всех фильмов"})
     @ApiResponse({status: 200, type: [Film]})
     @Get('films')
     async getAll() {
@@ -33,7 +33,7 @@ export class FilmsController {
         return film;
     }
 
-    @ApiOperation({summary: "Получение пользователя по типу фильма"})
+    @ApiOperation({summary: "Получение фильма по типу фильма"})
     @ApiResponse({status: 200, type: Film})
     @Get('films/filmType/:filmType')
     async getFilmsByType(@Param('filmType') filmType: string) {
@@ -41,13 +41,14 @@ export class FilmsController {
         return film;
     }
 
-    @ApiOperation({summary: "Получение пользователя по id"})
+    @ApiOperation({summary: "Получение фильма по id"})
     @ApiResponse({status: 200, type: Film})
     @Get('films/:id')
     async getFilmsById(@Param('id')  id: number) {
         const lang = '??'   //Пока хз, как мы будем его получать
         const film = await this.filmsService.getFilmById(id, lang);
         return film;
+        
     }
 
     // @Get('/country/:country')
@@ -106,12 +107,9 @@ export class FilmsController {
 
     @ApiOperation({summary: "Изменение названия фильма по id"})
     @ApiResponse({status: 200, type: Film})
-    @Put(':id/name')
-    async updateFilmsName(@Param('id') id: number, @Body('name') newFilmsName: string) {
-        const film = await this.filmsService.updateFilmsName(id, newFilmsName);
-        if (!film) {
-          throw new NotFoundException(`Film with id ${id} not found`);
-        }
+    @Put('films/:id/:lang/name')
+    async updateFilmsName(@Param('id') id: number, @Param('lang') lang: string, @Body('name') newFilmsName: string) {
+        const film = await this.filmsService.updateFilmsName(id, lang, newFilmsName);
         return film;
     }
 

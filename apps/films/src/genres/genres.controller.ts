@@ -28,20 +28,14 @@ export class GenresController {
     @Get('/:id')
     async getGenreById(@Param('id') id: number) {
         const genre = await this.genresService.getGenreById(id);
-        if (!genre) {
-            throw new NotFoundException(`Film with id ${id} not found`);
-          }
         return genre;
     }
 
-    @ApiOperation({summary: "Изменение жанра по id"})
+    @ApiOperation({summary: "Изменение названия жанра по id"})
     @ApiResponse({status: 200, type: Genre})
     @Put(':id/name')
     async updateGenreName(@Param('id') id: number, @Body('name') newName: string) {
         const genre = await this.genresService.updateGenreName(id, newName);
-        if (!genre) {
-        throw new NotFoundException(`Film with id ${id} not found`);
-        }
         return genre;
     }
 

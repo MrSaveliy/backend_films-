@@ -1,6 +1,6 @@
 import { InjectModel } from "@nestjs/sequelize";
 import { Film } from "./films.model";
-import { Inject, Injectable } from "@nestjs/common";
+import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { CreateFilmsDto } from "./dto/create-films.dto";
 import { Genre } from "../genres/genres.model";
 import { Country } from "../countries/countries.model";
@@ -356,15 +356,21 @@ export class FilmsService {
             where: { filmYear },
             include: { all: true }
         });
+        if (!film) {
+            throw new NotFoundException(`Genre with year ${filmYear} not found`);
+        }
         return film;
     }
 
-    async updateFilmsName(filmId: number, newFilmsName: string) {
+    async updateFilmsName(filmId: number, lang: string, newFilmsName: string) {
         const film = await this.filmlangRepository.findOne({
-            where: { filmId },
+            where: { filmId, lang},
             include: { all: true }
         });
         film.filmName = newFilmsName;
+        if (!film) {
+            throw new NotFoundException(`Genre with id ${filmId} not found`);
+        }
         await film.save();
         return film;
     }
@@ -372,7 +378,7 @@ export class FilmsService {
     async deleteFilm(id: number) {
         const film = await this.filmsRepository.findByPk(id);
         if (!film) {
-            throw new Error('Films not found');
+            throw new NotFoundException(`Genre with id ${id} not found`);
         }
         await film.destroy()
         return film;
