@@ -1,9 +1,10 @@
-import { Body, Controller, Get, Param, Post } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, UseGuards } from "@nestjs/common";
 import { PersonsService } from "./persons.service";
 import { CreatePersonsDto } from "./dto/create-persons.dto";
 import { MessagePattern } from "@nestjs/microservices";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { Person } from "./persons.model";
+import { AuthorOrAdminGuard } from "apps/profile-service/src/profiles/guard/author-or-admin.guard";
 
 @ApiTags('countries')
 @Controller('persons')
@@ -12,6 +13,7 @@ export class PersonsController {
 
     @ApiOperation({summary: "Создание человека"})
     @ApiResponse({status: 200, type: Person})
+    @UseGuards(AuthorOrAdminGuard)
     @Post()
     create(@Body() dto: CreatePersonsDto) {
         return this.personsService.createPersons(dto); 

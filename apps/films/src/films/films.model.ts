@@ -84,10 +84,13 @@ export class Film extends Model<Film> {
     //Их нет в самой таблице в бд, они нужны только чтобы в сервисе можно было удобно подцепить актеров и режиссеров,
     //полученных из сервиса с личностями
     //films.datavalues.actors и films.datavalues.directors - это вот эти строчки
+    //@ApiProperty({example: 'https://kinopoiskapiunofficial.tech/images/posters/kp/298.jpg', description: 'Ссылка на картинку фильма'})
     directors;
 
+    //@ApiProperty({example: 'https://kinopoiskapiunofficial.tech/images/posters/kp/298.jpg', description: 'Ссылка на картинку фильма'})
     actors;
 
+    //@ApiProperty({example: 'https://kinopoiskapiunofficial.tech/images/posters/kp/298.jpg', description: 'Ссылка на картинку фильма'})
     similarFilms;
 
 }

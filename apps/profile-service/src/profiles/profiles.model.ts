@@ -1,11 +1,13 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Column, DataType, Model, Table } from "sequelize-typescript";
+import { Column, DataType, HasMany, Model, Table } from "sequelize-typescript";
+import { Reviews } from "../rewiews/reviews.model";
 
 interface ProfileCreationAttrs {
     userId: number;
     name: string;
     middleName: string;
     lastName: string;
+    nickName: string;
     description: string;
     phoneNumber: string;
 }
@@ -33,6 +35,10 @@ export class Profile extends Model<Profile, ProfileCreationAttrs> {
     @Column({type: DataType.STRING})
     lastName: string;
 
+    @ApiProperty({example: 'Анатолий Пушкин', description: 'Ник пользователя'})
+    @Column({type: DataType.STRING})
+    nickName: string;
+
     @ApiProperty({example: 'О себе:', description: 'Описание пользователя'})
     @Column({type: DataType.STRING})
     description: string;
@@ -40,4 +46,7 @@ export class Profile extends Model<Profile, ProfileCreationAttrs> {
     @ApiProperty({example: '+79999999999', description: 'Телефон пользователя'})
     @Column({type: DataType.STRING})
     phoneNumber: string;
+
+    @HasMany(() => Reviews)
+    reviews: Reviews[];
 }

@@ -1,9 +1,11 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put, Query } from "@nestjs/common";
+import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put, Query, UseGuards } from "@nestjs/common";
 import { FilmsService } from "./films.service";
 import { CreateFilmsDto } from "./dto/create-films.dto";
 import { MessagePattern } from "@nestjs/microservices";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { Film } from "./films.model";
+import { AuthorOrAdminGuard } from "apps/profile-service/src/profiles/guard/author-or-admin.guard";
+import { Roles, RolesGuard } from "@app/common";
 
 @ApiTags('films')
 @Controller()
@@ -13,6 +15,7 @@ export class FilmsController {
 
     @ApiOperation({summary: "Создание фильма"})
     @ApiResponse({status: 200, type: Film})
+    @UseGuards(AuthorOrAdminGuard)
     @Post('films')
     async create(@Body() dto: CreateFilmsDto) {
         return await this.filmsService.createFilms(dto); 
@@ -50,19 +53,6 @@ export class FilmsController {
         return film;
         
     }
-
-    // @Get('/country/:country')
-    // async getFilmsByCountry(@Param('country')  films_list_country: Object) {
-    //     const film = await this.filmsService.getFilmsByCountry(films_list_country);
-    //     return film;
-    // }
-
-    /*@Get('/genres/:genres')
-    async getFilmsByGenres(@Param('genres')  name: string) {
-        const films = await this.filmsService.getFilmsByGenres(name);
-        return films;
-    }*/
-
 
     //Для главной страницы и для страницы поиска без фильтров
     @ApiOperation({summary: "-"})
@@ -107,6 +97,8 @@ export class FilmsController {
 
     @ApiOperation({summary: "Изменение названия фильма по id"})
     @ApiResponse({status: 200, type: Film})
+    @Roles("ADMIN")
+    @UseGuards(RolesGuard)
     @Put('films/:id/:lang/name')
     async updateFilmsName(@Param('id') id: number, @Param('lang') lang: string, @Body('name') newFilmsName: string) {
         const film = await this.filmsService.updateFilmsName(id, lang, newFilmsName);
@@ -115,6 +107,8 @@ export class FilmsController {
 
     @ApiOperation({summary: "Удаление фильма"})
     @ApiResponse({status: 200, type: Film})
+    @Roles("ADMIN")
+    @UseGuards(RolesGuard)
     @Delete(':id')
     async deleteFilm(@Param('id') id: number) {
        return await this.filmsService.deleteFilm(id);

@@ -367,10 +367,11 @@ export class FilmsService {
             where: { filmId, lang},
             include: { all: true }
         });
-        film.filmName = newFilmsName;
         if (!film) {
             throw new NotFoundException(`Genre with id ${filmId} not found`);
         }
+        film.filmName = newFilmsName;
+        
         await film.save();
         return film;
     }

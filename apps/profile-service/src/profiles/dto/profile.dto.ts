@@ -7,6 +7,8 @@ export class ProfileDto {
     readonly middleName: string;
     @ApiProperty({example: 'Пушкин', description: 'Фамилия пользователя'})
     readonly lastName: string;
+    @ApiProperty({example: 'Анатолий Пушкин', description: 'Ник пользователя'})
+    readonly nickName: string;
     @ApiProperty({example: 'О себе:', description: 'Описание пользователя'})
     readonly description: string;
     @ApiProperty({example: '+79999999999', description: 'Телефон пользователя'})
