@@ -36,6 +36,33 @@
       "compilerOptions": {
         "tsConfigPath": "libs/common/tsconfig.lib.json"
       }
+    },
+    "films": {
+      "type": "application",
+      "root": "apps/films",
+      "entryFile": "main",
+      "sourceRoot": "apps/films/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/films/tsconfig.app.json"
+      }
+    },
+    "main": {
+      "type": "application",
+      "root": "apps/main",
+      "entryFile": "main",
+      "sourceRoot": "apps/main/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/main/tsconfig.app.json"
+      }
+    },
+    "persons": {
+      "type": "application",
+      "root": "apps/persons",
+      "entryFile": "main",
+      "sourceRoot": "apps/persons/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/persons/tsconfig.app.json"
+      }
     }
   }
 }

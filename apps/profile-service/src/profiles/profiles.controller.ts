@@ -3,12 +3,17 @@ import { Roles, RolesGuard, UserDto } from "@app/common";
 import { ProfilesService } from "./profiles.service";
 import { ProfileDto } from './dto/profile.dto';
 import { AuthorOrAdminGuard } from './guard/author-or-admin.guard';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { Profile } from './profiles.model';
+
 
 @Controller('users')
 export class ProfilesController {
 
     constructor(private profilesService: ProfilesService) { }
 
+    @ApiOperation({summary: "Вход пользователя"})
+    @ApiResponse({status: 200, type: Profile})
     @Post('/login')
     async login(@Body() userDto: UserDto, @Response({ passthrough: true }) res) {
         const userData = await this.profilesService.login(userDto);
@@ -17,6 +22,8 @@ export class ProfilesController {
         return userData;
     }
 
+    @ApiOperation({summary: "Регистрация пользователя"})
+    @ApiResponse({status: 200, type: Profile})
     @Post('/registration')
     async registration(@Body() userDto: UserDto, @Response({ passthrough: true }) res) {
         const userData = await this.profilesService.register(userDto);
@@ -25,6 +32,8 @@ export class ProfilesController {
         return userData;
     }
 
+    @ApiOperation({summary: "Выход пользователя"})
+    @ApiResponse({status: 200, type: Profile})
     @Post('/logout')
     async logout(@Request() req) {
         const {refreshToken} = req.cookies;
@@ -32,6 +41,8 @@ export class ProfilesController {
         await this.profilesService.logout(refreshToken);
     }
 
+    @ApiOperation({summary: "-"})
+    @ApiResponse({status: 200, type: Profile})
     @Get('/refresh')
     async refresh(@Request() req, @Response({ passthrough: true }) res) {
         const {refreshToken} = req.cookies;
@@ -42,19 +53,25 @@ export class ProfilesController {
         return userData;
     }
 
-    //@Roles("ADMIN")
-    //@UseGuards(RolesGuard)
+    @ApiOperation({summary: "Получение всех профилей"})
+    @ApiResponse({status: 200, type: Profile})
+    @Roles("ADMIN")
+    @UseGuards(RolesGuard)
     @Get()
     getAll() {
         return this.profilesService.getAll();
     }
 
+    @ApiOperation({summary: "Получение профиля по id"})
+    @ApiResponse({status: 200, type: Profile})
     @UseGuards(AuthorOrAdminGuard)
     @Get('/:id')
     getUserDataById(@Param('id') id: number) {
         return this.profilesService.getUserDataById(id);
     }
 
+    @ApiOperation({summary: "Обновление профиля"})
+    @ApiResponse({status: 200, type: Profile})
     @UseGuards(AuthorOrAdminGuard)
     @Put('/:id')
     update(@Param('id') id: number,
@@ -62,6 +79,8 @@ export class ProfilesController {
         return this.profilesService.update(id, profileDto);
     }
 
+    @ApiOperation({summary: "Удаление профиля"})
+    @ApiResponse({status: 200, type: Profile})
     @UseGuards(AuthorOrAdminGuard)
     @Delete('/:id')
     delete(@Param('id') id: number) {
