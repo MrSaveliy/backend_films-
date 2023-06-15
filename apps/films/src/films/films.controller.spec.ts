@@ -7,7 +7,6 @@ describe('FilmsController', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [FilmsController],
     }).compile();
-
     controller = module.get<FilmsController>(FilmsController);
   });
 
